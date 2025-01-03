@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSpeechRecognition } from '@/lib/hooks/useSpeechRecognition';
+import { useSpeechRecognition } from '@/lib/speech/useSpeechRecognition';
 
 interface VoiceInputProps {
   isListening: boolean;
@@ -10,8 +10,8 @@ interface VoiceInputProps {
 }
 
 export function VoiceInput({ isListening, isPaused, onTranscript }: VoiceInputProps) {
-  const { toggleListening } = useSpeechRecognition({
-    onTranscript,
+  const { startListening, stopListening } = useSpeechRecognition({
+    onResult: onTranscript,
     onError: (error) => {
       console.error('Speech recognition error:', error);
     },
@@ -19,9 +19,11 @@ export function VoiceInput({ isListening, isPaused, onTranscript }: VoiceInputPr
 
   useEffect(() => {
     if (isListening && !isPaused) {
-      toggleListening();
+      startListening();
+    } else {
+      stopListening();
     }
-  }, [isListening, isPaused]); // Remove toggleListening from dependencies
+  }, [isListening, isPaused, startListening, stopListening]);
 
   return null;
 }
